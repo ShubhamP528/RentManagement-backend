@@ -1,6 +1,7 @@
 const Payment = require("../models/Payment");
 const Room = require("../models/room");
 const Tenant = require("../models/Tenant");
+const { getCompletedMonths } = require("../utils/utils");
 
 // Controller to add a new payment
 exports.addPayment = async (req, res) => {
@@ -26,41 +27,65 @@ exports.addPayment = async (req, res) => {
     if (!roomExists || !tenantExists) {
       return res.status(404).json({ message: "Room or Tenant not found" });
     }
-    const partialPendingMoney = RoomRent - tenantExists.Rent;
 
-    if (tenantExists.PendingMoney > 0 && tenantExists.AdvanceMoney === 0) {
-      if (partialPendingMoney > 0) {
-        tenantExists.PendingMoney =
-          tenantExists.PendingMoney - partialPendingMoney;
-      } else if (partialPendingMoney < 0) {
-        tenantExists.PendingMoney =
-          partialPendingMoney * -1 + tenantExists.PendingMoney;
-      }
-    } else if (
-      tenantExists.AdvanceMoney > 0 &&
-      tenantExists.PendingMoney === 0
-    ) {
-      if (partialPendingMoney > 0) {
-        tenantExists.AdvanceMoney =
-          tenantExists.AdvanceMoney + partialPendingMoney;
-      }
-      if (partialPendingMoney < 0) {
-        tenantExists.AdvanceMoney =
-          tenantExists.AdvanceMoney - partialPendingMoney * -1;
-      }
-    } else if (
-      tenantExists.AdvanceMoney === 0 &&
-      tenantExists.PendingMoney === 0
-    ) {
-      if (partialPendingMoney > 0) {
-        tenantExists.AdvanceMoney =
-          tenantExists.AdvanceMoney + partialPendingMoney;
-      }
-      if (partialPendingMoney < 0) {
-        tenantExists.PendingMoney =
-          tenantExists.PendingMoney + partialPendingMoney * -1;
-      }
+    const totalMonths = getCompletedMonths(tenantExists.startDate);
+
+    console.log("Start Date:", tenantExists.startDate);
+
+    console.log("Total Months:", totalMonths);
+
+    const totalRent = tenantExists.Rent * totalMonths;
+
+    const totalPayments = await Payment.find({ tenant: tenantExists._id });
+
+    const totalPaidRent = totalPayments.reduce((acc, payment) => {
+      return acc + payment.RoomRent;
+    }, 0);
+
+    const totalPayableRent = totalRent - totalPaidRent;
+    const partialPendingMoney = totalPayableRent - RoomRent;
+
+    if (partialPendingMoney > 0) {
+      tenantExists.PendingMoney = partialPendingMoney;
+      tenantExists.AdvanceMoney = 0;
+    } else {
+      tenantExists.AdvanceMoney = partialPendingMoney * -1;
+      tenantExists.PendingMoney = 0;
     }
+
+    // if (tenantExists.PendingMoney > 0 && tenantExists.AdvanceMoney === 0) {
+    //   if (partialPendingMoney > 0) {
+    //     tenantExists.PendingMoney =
+    //       tenantExists.PendingMoney - partialPendingMoney;
+    //   } else if (partialPendingMoney < 0) {
+    //     tenantExists.PendingMoney =
+    //       partialPendingMoney * -1 + tenantExists.PendingMoney;
+    //   }
+    // } else if (
+    //   tenantExists.AdvanceMoney > 0 &&
+    //   tenantExists.PendingMoney === 0
+    // ) {
+    //   if (partialPendingMoney > 0) {
+    //     tenantExists.AdvanceMoney =
+    //       tenantExists.AdvanceMoney + partialPendingMoney;
+    //   }
+    //   if (partialPendingMoney < 0) {
+    //     tenantExists.AdvanceMoney =
+    //       tenantExists.AdvanceMoney - partialPendingMoney * -1;
+    //   }
+    // } else if (
+    //   tenantExists.AdvanceMoney === 0 &&
+    //   tenantExists.PendingMoney === 0
+    // ) {
+    //   if (partialPendingMoney > 0) {
+    //     tenantExists.AdvanceMoney =
+    //       tenantExists.AdvanceMoney + partialPendingMoney;
+    //   }
+    //   if (partialPendingMoney < 0) {
+    //     tenantExists.PendingMoney =
+    //       tenantExists.PendingMoney + partialPendingMoney * -1;
+    //   }
+    // }
 
     // Calculate the total amount (RoomRent + Bill)
     const totalAmount = RoomRent + Bill;

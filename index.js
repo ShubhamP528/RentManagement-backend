@@ -6,6 +6,7 @@ const ownerAuthRoute = require("./routes/ownerAuth");
 const roomRoute = require("./routes/room");
 const tenantRoute = require("./routes/tenant");
 const paymentRoute = require("./routes/payment");
+const { cornJob } = require("./utils/utils");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -20,6 +21,21 @@ app.use("/room", roomRoute);
 app.use("/tenant", tenantRoute);
 app.use("/payment", paymentRoute);
 
-app.listen(8800, () => {
+const { CronJob } = require("cron");
+
+const job = new CronJob(
+  "0 0 1 * * *", // At 1:00 AM (hours, minutes, seconds)
+  () => {
+    console.log("Running job at 1 AM IST");
+    cornJob();
+  },
+  null,
+  true,
+  "Asia/Kolkata" // Timezone
+);
+
+job.start();
+
+app.listen(8800, async () => {
   console.log("Server is running at 8800");
 });
