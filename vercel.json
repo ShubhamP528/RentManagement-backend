@@ -11,10 +11,10 @@
       "dest": "index.js"
     }
   ],
-  "cron": [
+  "crons": [
     {
       "path": "/",
-      "schedule": "57 0 * * *"
+      "schedule": "59 0 * * *"
     }
   ]
 }
