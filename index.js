@@ -37,10 +37,11 @@ app.use("/payment", paymentRoute);
 // job.start();
 
 // This handler is used for scheduled (cron) tasks on Vercel.
-exports.handler = async (req, res) => {
+// This is our serverless function handler which will be used by Vercel for cron jobs or API requests.
+const handler = async (req, res) => {
   try {
     console.log("Cron job triggered!");
-    await cornJob(); // Ensure cronJob is defined correctly in your utils
+    await cornJob();
     res.status(200).json({ message: "Cron job ran successfully!" });
   } catch (error) {
     console.error("Error executing cron job:", error);
@@ -50,10 +51,13 @@ exports.handler = async (req, res) => {
   }
 };
 
-// Only start the Express server when not deployed on Vercel
+// Export the handler as the default export for Vercel
+module.exports = handler;
+
+// Only start the standalone Express server when not running in the Vercel environment
 if (!process.env.VERCEL_ENV) {
   app.listen(8800, () => {
-    console.log("Server is running at 8800");
+    console.log("Server is running on port 8800");
   });
 }
 
