@@ -36,7 +36,7 @@ const job = new CronJob(
 
 job.start();
 
-const handler = async (req, res) => {
+exports.handler = async (req, res) => {
   // Your periodic task logic here
   console.log("Cron job triggered!");
   await cornJob();
