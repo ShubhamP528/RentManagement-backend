@@ -1,14 +1,20 @@
 {
   "builds": [
     {
-      "src": "api/**/*.js",
+      "src": "./index.js",
       "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/.*",
+      "dest": "index.js"
     }
   ],
   "cron": [
     {
-      "path": "/api/cron-task",
-      "schedule": "53  0 * * *"
+      "path": "/",
+      "schedule": "57 0 * * *"
     }
   ]
 }

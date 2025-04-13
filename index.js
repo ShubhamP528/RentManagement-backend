@@ -36,6 +36,14 @@ const job = new CronJob(
 
 job.start();
 
+const handler = async (req, res) => {
+  // Your periodic task logic here
+  console.log("Cron job triggered!");
+  await cornJob();
+  // Do something like call an API, update DB, etc.
+  res.status(200).json({ message: "Cron job ran successfully!" });
+};
+
 app.listen(8800, async () => {
   console.log("Server is running at 8800");
 });
