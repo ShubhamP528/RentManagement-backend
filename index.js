@@ -40,7 +40,7 @@ app.use("/payment", paymentRoute);
 exports.handler = async (req, res) => {
   try {
     console.log("Cron job triggered!");
-    await cronJob(); // Ensure cronJob is defined correctly in your utils
+    await cornJob(); // Ensure cronJob is defined correctly in your utils
     res.status(200).json({ message: "Cron job ran successfully!" });
   } catch (error) {
     console.error("Error executing cron job:", error);
