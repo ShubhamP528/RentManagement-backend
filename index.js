@@ -21,29 +21,50 @@ app.use("/room", roomRoute);
 app.use("/tenant", tenantRoute);
 app.use("/payment", paymentRoute);
 
-const { CronJob } = require("cron");
+// const { CronJob } = require("cron");
 
-const job = new CronJob(
-  "0 0 1 * * *", // At 1:00 AM (hours, minutes, seconds)
-  () => {
-    console.log("Running job at 1 AM IST");
-    cornJob();
-  },
-  null,
-  true,
-  "Asia/Kolkata" // Timezone
-);
+// const job = new CronJob(
+//   "0 0 1 * * *", // At 1:00 AM (hours, minutes, seconds)
+//   () => {
+//     console.log("Running job at 1 AM IST");
+//     cornJob();
+//   },
+//   null,
+//   true,
+//   "Asia/Kolkata" // Timezone
+// );
 
-job.start();
+// job.start();
 
+// This handler is used for scheduled (cron) tasks on Vercel.
 exports.handler = async (req, res) => {
-  // Your periodic task logic here
-  console.log("Cron job triggered!");
-  await cornJob();
-  // Do something like call an API, update DB, etc.
-  res.status(200).json({ message: "Cron job ran successfully!" });
+  try {
+    console.log("Cron job triggered!");
+    await cronJob(); // Ensure cronJob is defined correctly in your utils
+    res.status(200).json({ message: "Cron job ran successfully!" });
+  } catch (error) {
+    console.error("Error executing cron job:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred during cron job execution." });
+  }
 };
 
-app.listen(8800, async () => {
-  console.log("Server is running at 8800");
-});
+// Only start the Express server when not deployed on Vercel
+if (!process.env.VERCEL_ENV) {
+  app.listen(8800, () => {
+    console.log("Server is running at 8800");
+  });
+}
+
+// exports.handler = async (req, res) => {
+//   // Your periodic task logic here
+//   console.log("Cron job triggered!");
+//   await cornJob();
+//   // Do something like call an API, update DB, etc.
+//   res.status(200).json({ message: "Cron job ran successfully!" });
+// };
+
+// app.listen(8800, async () => {
+//   console.log("Server is running at 8800");
+// });
