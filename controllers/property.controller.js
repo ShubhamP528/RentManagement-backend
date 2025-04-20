@@ -8,6 +8,8 @@ exports.addProperty = async (req, res) => {
   const name = req.body.propertyName;
   const address = req.body.address;
   const rooms = req.body.rooms;
+
+  console.log(req.body);
   try {
     const newAddress = await Address.create(address);
 
