@@ -19,6 +19,16 @@ const personShema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phoneNumber: {
+    type: String,
+    required: true,
+    // validate: {
+    //   validator: function (value) {
+    //     return /^\d{10}$/.test(value); // Validate for 10-digit phone number
+    //   },
+    //   message: "Phone number must be a 10-digit number.",
+    // },
+  },
   gender: {
     type: String,
     required: true,

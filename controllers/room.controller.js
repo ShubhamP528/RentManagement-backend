@@ -32,7 +32,7 @@ exports.roomDetails = async (req, res) => {
       populate: [
         {
           path: "headPerson",
-          select: "name dob email gender address",
+          select: "name dob email gender address phoneNumber",
           populate: {
             path: "address",
             select: "pincode locality address city state landmark",
@@ -40,7 +40,7 @@ exports.roomDetails = async (req, res) => {
         },
         {
           path: "Persons",
-          select: "name dob email gender address isHead relation",
+          select: "name dob email gender address isHead relation phoneNumber",
           populate: {
             path: "address",
             select: "pincode locality address city state landmark",
