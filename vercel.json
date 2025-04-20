@@ -9,11 +9,15 @@
     {
       "src": "/.*",
       "dest": "index.js"
+    },
+    {
+      "src": "/.*",
+      "dest": "cron.js"
     }
   ],
   "crons": [
     {
-      "path": "/",
+      "path": "/cron",
       "schedule": "30 19 * * *"
     }
   ]
