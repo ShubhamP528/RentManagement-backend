@@ -8,12 +8,12 @@ const personShema = new mongoose.Schema({
   dob: {
     type: Date,
     required: true,
-    validate: {
-      validator: function (value) {
-        return new Date() - value > 315576000000; // 1 year in milliseconds
-      },
-      message: "Date of birth must be before the current date.",
-    },
+    // validate: {
+    //   validator: function (value) {
+    //     return new Date() - value > 315576000000; // 1 year in milliseconds
+    //   },
+    //   message: "Date of birth must be before the current date.",
+    // },
   },
   email: {
     type: String,
