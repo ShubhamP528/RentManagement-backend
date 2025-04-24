@@ -1,7 +1,7 @@
 const Payment = require("../models/Payment");
 const Room = require("../models/room");
 const Tenant = require("../models/Tenant");
-const { getCompletedMonths } = require("../utils/utils");
+const { getCompletedMonths, sendPaymentEmail } = require("../utils/utils");
 
 // Controller to add a new payment
 exports.addPayment = async (req, res) => {
@@ -22,7 +22,7 @@ exports.addPayment = async (req, res) => {
 
     // Validate if room and tenant exist
     const roomExists = await Room.findById(room);
-    const tenantExists = await Tenant.findById(tenant);
+    const tenantExists = await Tenant.findById(tenant).populate("headPerson");
 
     if (!roomExists || !tenantExists) {
       return res.status(404).json({ message: "Room or Tenant not found" });
@@ -53,40 +53,6 @@ exports.addPayment = async (req, res) => {
       tenantExists.PendingMoney = 0;
     }
 
-    // if (tenantExists.PendingMoney > 0 && tenantExists.AdvanceMoney === 0) {
-    //   if (partialPendingMoney > 0) {
-    //     tenantExists.PendingMoney =
-    //       tenantExists.PendingMoney - partialPendingMoney;
-    //   } else if (partialPendingMoney < 0) {
-    //     tenantExists.PendingMoney =
-    //       partialPendingMoney * -1 + tenantExists.PendingMoney;
-    //   }
-    // } else if (
-    //   tenantExists.AdvanceMoney > 0 &&
-    //   tenantExists.PendingMoney === 0
-    // ) {
-    //   if (partialPendingMoney > 0) {
-    //     tenantExists.AdvanceMoney =
-    //       tenantExists.AdvanceMoney + partialPendingMoney;
-    //   }
-    //   if (partialPendingMoney < 0) {
-    //     tenantExists.AdvanceMoney =
-    //       tenantExists.AdvanceMoney - partialPendingMoney * -1;
-    //   }
-    // } else if (
-    //   tenantExists.AdvanceMoney === 0 &&
-    //   tenantExists.PendingMoney === 0
-    // ) {
-    //   if (partialPendingMoney > 0) {
-    //     tenantExists.AdvanceMoney =
-    //       tenantExists.AdvanceMoney + partialPendingMoney;
-    //   }
-    //   if (partialPendingMoney < 0) {
-    //     tenantExists.PendingMoney =
-    //       tenantExists.PendingMoney + partialPendingMoney * -1;
-    //   }
-    // }
-
     // Calculate the total amount (RoomRent + Bill)
     const totalAmount = RoomRent + Bill;
 
@@ -111,6 +77,21 @@ exports.addPayment = async (req, res) => {
     await newPayment.save();
 
     await tenantExists.save();
+
+    // ✅ Send confirmation email
+    await sendPaymentEmail({
+      to: tenantExists?.headPerson?.email,
+      tenantName: tenantExists?.headPerson?.name,
+      roomNumber: roomExists.number || roomExists.name || "Room", // customize based on schema
+      DOP,
+      MOP,
+      RoomRent,
+      Bill,
+      totalAmount,
+      previousReading,
+      currentReading,
+      finalReading: currentReading,
+    });
 
     // Respond with the saved payment
     res.status(201).json({

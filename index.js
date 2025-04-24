@@ -8,6 +8,7 @@ const tenantRoute = require("./routes/tenant");
 const paymentRoute = require("./routes/payment");
 // const { cornJob } = require("./utils/utils");
 const path = require("path");
+const { cornJob } = require("./utils/utils");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -38,6 +39,19 @@ app.get("/download-apk", (req, res) => {
       res.status(500).send("Error downloading the file");
     }
   });
+});
+
+app.get("/run-cron-job", async (req, res) => {
+  try {
+    console.log("Cron job triggered!");
+    await cornJob();
+    res.status(200).json({ message: "Cron job ran successfully!" });
+  } catch (error) {
+    console.error("Error executing cron job:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred during cron job execution." });
+  }
 });
 
 // // This handler is used for scheduled (cron) tasks on Vercel.
