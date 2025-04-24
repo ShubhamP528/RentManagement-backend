@@ -6,13 +6,13 @@
     }
   ],
   "routes": [
-    { "src": "/cron", "dest": "cron.js" },
+    { "src": "/api/cron", "dest": "api/cron.js" },
 
     { "src": "/.*", "dest": "index.js" }
   ],
   "crons": [
     {
-      "path": "/cron",
+      "path": "/api/cron",
       "schedule": "30 19 * * *"
     }
   ]
