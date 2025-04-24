@@ -1,4 +1,7 @@
+const { connectDatabase } = require("../config/database");
 const { cornJob } = require("../utils/utils");
+
+connectDatabase();
 
 module.exports = async (req, res) => {
   try {
