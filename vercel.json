@@ -6,14 +6,9 @@
     }
   ],
   "routes": [
-    {
-      "src": "/.*",
-      "dest": "index.js"
-    },
-    {
-      "src": "/.*",
-      "dest": "cron.js"
-    }
+    { "src": "/cron", "dest": "cron.js" },
+
+    { "src": "/.*", "dest": "index.js" }
   ],
   "crons": [
     {
