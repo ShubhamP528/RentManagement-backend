@@ -25,7 +25,7 @@ app.use("/payment", paymentRoute);
 
 app.get("/app-version", (req, res) => {
   const resObj = {
-    latestVersion: "1.0.1", // Example version
+    latestVersion: "1.0.1.1", // Example version
     mandatory: true, // Example mandatory flag
     apkUrl: "https://rent-management-backend-three.vercel.app/download-apk", // Example APK URL
   };
