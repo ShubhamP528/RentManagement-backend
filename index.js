@@ -36,7 +36,7 @@ app.get("/download-apk", (req, res) => {
   const apkPath = path.join(__dirname, "apk", "rentManagement.apk"); // replace with your APK file name
   res.download(apkPath, "rentManagement.apk", (err) => {
     if (err) {
-      res.status(500).send("Error downloading the file");
+      res.status(500).send("Error downloading the file.");
     }
   });
 });
