@@ -86,6 +86,7 @@ const sendPaymentEmail = async ({
         pass: process.env.EMAIL_PASS, // your email password or app password
       },
     });
+    DOP = new Date(DOP).toISOString().split("T")[0];
 
     // HTML content from your template
     const html = `
